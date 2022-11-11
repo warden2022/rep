@@ -1,0 +1,130 @@
+{
+    "1": {
+        "group": "ОГЭ математика",
+        "zoom": "https://us05web.zoom.us/j/78289857291?pwd=K2lVaHlDK0I2b3Bzdllxa2xEVXo4UT09",
+        "tm_gr": null,
+        "participants": [
+            {
+                "user_id": 0,
+                "name": null,
+                "nick": null,
+                "balance": null,
+                "parent": null,
+                "dates": {
+                    "plus": [],
+                    "minus": [
+                        "2022-11-12"
+                    ]
+                }
+            },
+            {
+                "user_id": 1,
+                "name": "Vanya",
+                "nick": "@vazelinio",
+                "balance": 0,
+                "parent": "05-Юлия мама Вани",
+                "dates": {
+                    "plus": [
+                        "2022-11-01"
+                    ],
+                    "minus": [
+                        "2022-11-01",
+                        "2022-11-02",
+                        "2022-12-1",
+                        "2022-11-11",
+                        "2022-11-11",
+                        "2022-11-11",
+                        "2022-11-11",
+                        "2022-11-11",
+                        "2022-11-11",
+                        "2022-11-11",
+                        "2022-11-11",
+                        "2022-11-12"
+                    ]
+                }
+            },
+            {
+                "user_id": 2,
+                "name": "Muhammad",
+                "nick": null,
+                "balance": 0,
+                "parent": "Мадина",
+                "dates": {
+                    "plus": [],
+                    "minus": [
+                        "2022-11-11",
+                        "2022-11-11",
+                        "2022-11-11",
+                        "2022-11-11",
+                        "2022-11-11",
+                        "2022-11-11",
+                        "2022-11-11",
+                        "2022-11-12"
+                    ]
+                }
+            }
+        ]
+    },
+    "2": {
+        "group": "ОГЭ информатика",
+        "zoom": "https://us05web.zoom.us/j/74787987569?pwd=ekVZK2N3c2F4MmFwQVBPeXNUN0p2Zz09",
+        "tm_gr": null,
+        "participants": [
+            {},
+            {
+                "user_id": 1,
+                "name": "Vanya",
+                "nick": "@vazelinio",
+                "balance": 0,
+                "parent": "05-Юлия мама Вани",
+                "dates": {
+                    "plus": [
+                        "2022-11-01"
+                    ],
+                    "minus": [
+                        "2022-11-01",
+                        "2022-11-02",
+                        "2022-12-1",
+                        "2022-11-11",
+                        "2022-11-11",
+                        "2022-11-11",
+                        "2022-11-11"
+                    ]
+                }
+            },
+            {
+                "user_id": 2,
+                "name": "Muhammad",
+                "nick": null,
+                "balance": 0,
+                "parent": "Мадина",
+                "dates": {
+                    "plus": [],
+                    "minus": [
+                        "2022-11-11",
+                        "2022-11-11",
+                        "2022-11-11"
+                    ]
+                }
+            }
+        ]
+    },
+    "3": {
+        "group": "ЕГЭ математика",
+        "zoom": "https://us05web.zoom.us/j/78289857291?pwd=K2lVaHlDK0I2b3Bzdllxa2xEVXo4UT09",
+        "tm_gr": null,
+        "participants": [
+            "Vasya3",
+            "Fedya3"
+        ]
+    },
+    "4": {
+        "group": "ЕГЭ информатика",
+        "tm_gr": null,
+        "zoom": "https://us05web.zoom.us/j/74787987569?pwd=ekVZK2N3c2F4MmFwQVBPeXNUN0p2Zz09",
+        "participants": [
+            "Vasya4",
+            "Fedya4"
+        ]
+    }
+}

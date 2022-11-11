@@ -11,8 +11,8 @@ router = Router()
 async def cmd_start(message: Message, state: FSMContext):
     await state.clear()
     await message.answer(
-        text="Выберите, занятие: "
-             "Индив (/idiv), Предмет (/groups) или Програмирование(/pie).",
+        text="Выберите, занятие:\n\n"
+             "Индив (/idiv),\nГруппа (/groups)\nПрограмирование(/pie).",
         reply_markup=ReplyKeyboardRemove()
     )
 

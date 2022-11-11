@@ -1,26 +1,35 @@
 import json
 
-from aiogram import Router, F
+from aiogram import Router, types, F
 from aiogram.dispatcher.filters.command import Command
 from aiogram.dispatcher.fsm.context import FSMContext
 from aiogram.dispatcher.fsm.state import StatesGroup, State
 from aiogram.types import Message, ReplyKeyboardRemove
 
-from keyboards.simple_row import make_row_keyboard
+
+from keyboards.simple_row import make_row_keyboard#, make_keyboard
 from data.data_1 import *
+from func import get_date_now, create_conference
+from data_base.data_childs import set_balance
+
+#from data_base.data_curent import curent
+
 router = Router()
 
+curent = {}
 # Эти значения далее будут подставляться в итоговый текст, отсюда
 # такая на первый взгляд странная форма прилагательных
 available_subjects = ["Математике", "Информатике",]
 available_levels = ["Среднюю", "Старшую", ]
-#available_datas = ["Начать","Участники","Баланс"]
+available_begin = ["/begin",]
+
 id_group = 0
 
 class OrderGroup(StatesGroup):
     choosing_subjects = State()
     choosing_levels = State()
-    #choosing_datas = State()
+    choosing_begin = State()
+
 
 
 @router.message(Command(commands=["groups"]))
@@ -64,7 +73,6 @@ async def level_chosen(message: Message, state: FSMContext):
     subj = user_data['chosen_subject']
     if lev == available_levels[0].lower() and subj == available_subjects[0].lower():
         id_group = "1"
-        less = "ОГЭ математика"
     elif lev == available_levels[0].lower() and subj == available_subjects[1].lower():
         id_group = "2"
     elif lev == available_levels[1].lower() and subj == available_subjects[0].lower():
@@ -73,31 +81,40 @@ async def level_chosen(message: Message, state: FSMContext):
         id_group = "4"
     else:
         id_group = "not found"
+    # Открываем database
+    now = get_date_now()
+    #print(d_groups["1"])
+    with open(f"./data_base/data_groups.json", "r", encoding="utf-8") as f:
+        groups = json.load(f)
+    teams = groups[id_group]["participants"]
+    zoom = groups[id_group]["zoom"]
+    tm_gr = groups[id_group]["tm_gr"]
+    for i in teams:
+        if i["user_id"] == 0:
+            continue
+        else:
+            name = i["name"]
+            nick = i["nick"]
+            balance = i["balance"]
+            # Создаем карточку и выводим данные
+            await message.answer(
+                text=f"{name} {nick}\n"
+                    f"Осталось занятий: {balance}\n"
+            )
+    # Сохраняем id группы
+    curent_group = {"id":id_group}
+    with open(f"data/date/curent.json", "w", encoding="utf-8") as f:
+        json.dump(curent_group, f, indent=4, ensure_ascii=False)
     
-    # Открываем database 
-    with open("./data/data.json", "r", encoding="utf-8") as f:
-        item = json.load(f)[id_group]
-        
-    zoom = item["zoom"]
-    tm_gr = item["tm_gr"]
-    for i in item["participants"]:
-        name = i["name"]
-        nick = i["nick"]
-        balance = i["balance"]
-        # Создаем карточку и выводим данные
-        await message.answer(
-            text=f"{name} {nick}\n"
-                 f"Осталось занятий: {balance}\n"
-        )
     await message.answer(
         text=f"Вы выбрали {message.text.lower()} группу по {user_data['chosen_subject']}.\n"
              f"zoom: {zoom}\n"
-             f"telegram: {tm_gr}\n"
-             f"Начать урок: /start_lesson\n"
+             f"telegram: {tm_gr}\n\n"
+             f"Начать урок: /begin\n"
              f"открыть список участников: /participants\n"
              f"отметить отсутствующих: /marking\n",
-        #reply_markup=make_row_keyboard(available_datas)
-        reply_markup=ReplyKeyboardRemove()
+        reply_markup=make_row_keyboard(available_begin)
+        # reply_markup=ReplyKeyboardRemove()
     )
 
     # Сброс состояния и сохранённых данных у пользователя
@@ -115,32 +132,54 @@ async def level_chosen_incorrectly(message: Message):
 # Этап просмотра участников #
 #
 #
-'''
-@router.message(OrderGroup.choosing_datas, F.text.in_(available_datas))
-async def group_chosen(message: Message, state: FSMContext):
-    user_data = await state.get_data()
-    with await open("data_1.py", "r", encoding="utf-8") as f:
-        item = f.read()
+@router.message(Command(commands=["begin"]))
+async def cmd_begin(message: Message):
+    # Текущая дата
+    now = get_date_now()
+    # считываем данные о группах 
+    with open(f"./data_base/data_groups.json", "r", encoding="utf-8") as f:
+        groups = json.load(f)
+        # Считываем данные id текущей группы
+        with open(f"./data/date/curent.json", "r", encoding="utf-8") as f:
+            group_id = json.load(f)["id"] # id группы
+            # Снимаем с баланс абонемент каждого участника текущей группы
+            for i in groups[group_id]["participants"]:
+                id_item = i["user_id"]
+                set_balance(id_item, now,-1)
+            # Считываем данные учеников
+            with open(f"./data_base/data_childs.json", "r", encoding="utf-8") as f:
+                child = json.load(f)
+                # Сохраняем обновленные данные учеников в группе
+                groups[group_id]["participants"] = child
+                with open(f"./data_base/data_groups.json", "w", encoding="utf-8") as f:
+                    json.dump(groups, f, indent=4, ensure_ascii=False)
+            
+            # Начинаем конференцию
+            zoom = groups[group_id]["zoom"]    # url zoom conference
+            tm_gr = groups[group_id]["tm_gr"]  # url telegram conference
+            '''
+            try:
+                if tm_gr:
+                    create_conference(tm_gr)
+            except:
+                create_conference(zoom)
+            '''
 
+    # addBalance
+    # marking
+    #
     await message.answer(
-        text=f"Вы выбрали {message.text.lower()} группу по {user_data['chosen_subject']}.\n"
-             f"{item}\n"
-             f"Начать урок: /start_lesson\n"
-             f"открыть список участников: /participants\n"
-             f"отметить присутствующих: /marking\n",
+        text=f"Началось\n",
         reply_markup=ReplyKeyboardRemove()
     )
-
     # Сброс состояния и сохранённых данных у пользователя
-    await state.clear()
+    #await state.clear()
 
-
-@router.message(OrderGroup.choosing_datas)
-async def group_chosen_incorrectly(message: Message):
+@router.message(OrderGroup.choosing_begin)
+async def begin_chosen_incorrectly(message: Message):
     await message.answer(
-        text="Я не знаю такого уровня.\n\n"
+        text="Я не знаю такого.\n\n"
              "Пожалуйста, выберите один из вариантов из списка ниже:",
-        reply_markup=make_row_keyboard(available_datas)
+        reply_markup=make_row_keyboard(available_begin)
     )
 
-'''

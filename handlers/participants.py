@@ -7,3 +7,21 @@ from aiogram.types import Message, ReplyKeyboardRemove
 from keyboards.simple_row import make_row_keyboard
 
 router = Router()
+
+users = {
+    "id"        :None,
+    "username"  :None,
+    "nickname"  :None,
+    "balance"   :0,
+
+    "contacts"  :{
+        "email" :None,
+        "parent":None,
+    },
+
+    "dates"     :[
+
+    ],
+    
+
+}
